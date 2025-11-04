@@ -14,10 +14,30 @@ class ActivitySeeder extends Seeder
     public function run(): void
     {
         Activity::insert([
-            ['name' => 'Robotics', 'description' => 'Learn to build and program robots.', 'day' => 'Monday', 'hour' => '16:00 - 17:30'],
-            ['name' => 'Chess', 'description' => 'Improve your strategy and tactics.', 'day' => 'Tuesday', 'hour' => '17:00 - 18:30'],
-            ['name' => 'Painting', 'description' => 'Explore your creativity with colors.', 'day' => 'Wednesday', 'hour' => '15:30 - 17:00'],
-            ['name' => 'English', 'description' => 'Practice conversational English.', 'day' => 'Thursday', 'hour' => '16:30 - 18:00'],
+            [
+                'name' => 'Robótica',
+                'description' => 'Aprende a construir y programar robots.',
+                'day' => 'Lunes',
+                'hour' => '16:00 - 17:30'
+            ],
+            [
+                'name' => 'Ajedrez',
+                'description' => 'Mejora tu estrategia y tácticas de juego.',
+                'day' => 'Martes',
+                'hour' => '17:00 - 18:30'
+            ],
+            [
+                'name' => 'Pintura',
+                'description' => 'Explora tu creatividad con los colores.',
+                'day' => 'Miércoles',
+                'hour' => '15:30 - 17:00'
+            ],
+            [
+                'name' => 'Inglés',
+                'description' => 'Practica inglés conversacional de forma divertida.',
+                'day' => 'Jueves',
+                'hour' => '16:30 - 18:00'
+            ],
         ]);
     }
 }

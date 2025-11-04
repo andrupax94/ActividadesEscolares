@@ -8,10 +8,13 @@ use Illuminate\Http\Request;
 
 class ActivityController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $activities = Activity::all();
-        return view('activities.index', compact('activities'));
+
+        return $request->expectsJson()
+            ? response()->json($activities)
+            : view('activities.index', compact('activities'));
     }
 
     public function create()
@@ -21,14 +24,19 @@ class ActivityController extends Controller
 
     public function store(ActivityRequest $request)
     {
-        Activity::create($request->validated());
-        return redirect()->route('activities.index');
+        $activity = Activity::create($request->validated());
+
+        return JsonOrViewChecker($request, 'activities.index', [
+            'activity' => $activity,
+            'message' => 'Actividad creada correctamente'
+        ], 201);
     }
 
-
-    public function show(Activity $activity)
+    public function show(Request $request, Activity $activity)
     {
-        return view('activities.show', compact('activity'));
+        return $request->expectsJson()
+            ? response()->json($activity)
+            : view('activities.show', compact('activity'));
     }
 
     public function edit(Activity $activity)
@@ -36,15 +44,22 @@ class ActivityController extends Controller
         return view('activities.edit', compact('activity'));
     }
 
-    public function update(ActivityRequest $request)
+    public function update(ActivityRequest $request, Activity $activity)
     {
-        Activity::update($request->validated());
-        return redirect()->route('activities.index');
+        $activity->update($request->validated());
+
+        return JsonOrViewChecker($request, 'activities.index', [
+            'activity' => $activity,
+            'message' => 'Actividad actualizada correctamente'
+        ]);
     }
 
-    public function destroy(Activity $activity)
+    public function destroy(Request $request, Activity $activity)
     {
         $activity->delete();
-        return redirect()->route('activities.index');
+
+        return JsonOrViewChecker($request, 'activities.index', [
+            'message' => 'Actividad eliminada correctamente'
+        ]);
     }
 }

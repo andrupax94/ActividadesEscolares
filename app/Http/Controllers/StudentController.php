@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StudentRequest;
 use App\Models\Student;
+use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $students = Student::all();
-        return view('students.index', compact('students'));
+
+        return $request->expectsJson()
+            ? response()->json($students)
+            : view('students.index', compact('students'));
     }
 
     public function create()
@@ -20,13 +24,21 @@ class StudentController extends Controller
 
     public function store(StudentRequest $request)
     {
-        Student::create($request->validated());
-        return redirect()->route('students.index');
+        $student = Student::create($request->validated());
+
+        return JsonOrViewChecker($request, 'students.index', [
+            'student' => $student,
+            'message' => 'Alumno creado correctamente'
+        ], 201);
     }
 
-    public function show(Student $student)
+    public function show(Request $request, Student $student)
     {
-        return view('students.show', compact('student'));
+        $student->load('activities');
+
+        return $request->expectsJson()
+            ? response()->json($student)
+            : view('students.show', compact('student'));
     }
 
     public function edit(Student $student)
@@ -37,12 +49,19 @@ class StudentController extends Controller
     public function update(StudentRequest $request, Student $student)
     {
         $student->update($request->validated());
-        return redirect()->route('students.index');
+
+        return JsonOrViewChecker($request, 'students.index', [
+            'student' => $student,
+            'message' => 'Alumno actualizado correctamente'
+        ]);
     }
 
-    public function destroy(Student $student)
+    public function destroy(Request $request, Student $student)
     {
         $student->delete();
-        return redirect()->route('students.index');
+
+        return JsonOrViewChecker($request, 'students.index', [
+            'message' => 'Alumno eliminado correctamente'
+        ]);
     }
 }
