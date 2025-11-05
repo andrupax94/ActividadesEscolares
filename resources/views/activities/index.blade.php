@@ -31,7 +31,7 @@
                 <td>{{ $activity->id }}</td>
                 <td>{{ $activity->name }}</td>
                 <td>{{ $activity->description ?? 'Sin descripción' }}</td>
-                <td>{{ $activity->day }}</td>
+                <td>{{ $activity->days_string }}</td>
                 <td>{{ $activity->hour }}</td>
                 <td class="text-center">
                     <a href="{{ route('activities.show', $activity) }}" class="btn btn-sm btn-primary me-1" title="Ver">

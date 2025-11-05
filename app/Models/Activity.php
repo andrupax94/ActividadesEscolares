@@ -9,7 +9,7 @@ class Activity extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'day', 'hour'];
+    protected $fillable = ['name', 'description', 'days_string', 'hour'];
 
     public function students()
     {

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('day'); // e.g., Lunes, Martes
+            $table->string('days_string');
             $table->string('hour'); // e.g., 16:00 - 17:30
             $table->timestamps();
         });

@@ -50,6 +50,11 @@ header nav {
     color: #0dcaf0;
 }
 
+main {
+    max-height: 70vh;
+    overflow: auto;
+}
+
 /* Footer personalizado */
 .footer {
     position: absolute;
@@ -59,6 +64,7 @@ header nav {
     color: #f8f9fa;
     font-size: 0.95rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px !important;
 }
 
 .footer a {
@@ -75,14 +81,10 @@ header nav {
     margin-right: 4px;
 }
 
-.table-responsive {
-    max-height: 60vh;
-    overflow: auto;
-    position: relative;
-}
+
+
+.table-responsive {}
 
 @media (min-width: 992px) {
-    .table-responsive {
-        max-height: 70vh;
-    }
+    .table-responsive {}
 }

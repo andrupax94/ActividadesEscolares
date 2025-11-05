@@ -30,9 +30,9 @@
     </header>
 
 
-    <div class="container">
+    <main class="container">
         @yield('content')
-    </div>
+    </main>
     <footer class="footer mt-5 py-4 bg-dark text-white">
         <div class="container text-center">
             <p class="mb-1">

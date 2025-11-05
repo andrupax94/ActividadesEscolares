@@ -26,17 +26,36 @@
 
     <div class="mb-3">
         <label for="day" class="form-label">Día</label>
-        <select name="day" id="day" class="form-select @error('day') is-invalid @enderror" required>
-            <option value="">Selecciona un día</option>
-            @foreach(['Lunes','Martes','Miércoles','Jueves','Viernes'] as $dia)
-            <option value="{{ $dia }}" {{ old('day', $activity->day ?? '') === $dia ? 'selected' : '' }}>
-                {{ $dia }}
-            </option>
-            @endforeach
-        </select>
-        @error('day')
-        <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
+        <div class="mb-3">
+            <label class="form-label d-block">Días</label>
+            <div class="d-flex gap-2">
+                @php
+                $dias = ['Lunes' => 'L', 'Martes' => 'M', 'Miércoles' => 'X', 'Jueves' => 'J', 'Viernes' => 'V'];
+                $seleccionados = explode(',', old('days', $activity->days ?? ''));
+                @endphp
+
+                @foreach($dias as $nombre => $letra)
+                <label class="btn btn-outline-primary day-toggle {{ in_array($nombre, $seleccionados) ? 'active' : '' }}"
+                    style="width: 40px; height: 40px; text-align: center; padding: 0.5rem; line-height: 1.2;"
+                    data-day="{{ $nombre }}">
+                    <input type="checkbox" name="days[]" value="{{ $nombre }}"
+                        class="btn-check day-checkbox"
+                        autocomplete="off"
+                        {{ in_array($nombre, $seleccionados) ? 'checked' : '' }}>
+                    {{ $letra }}
+                </label>
+                @endforeach
+
+            </div>
+
+            <input type="hidden" name="days_string" id="days_string" value="{{ old('days_string', $activity->days_string ?? '') }}">
+
+            @error('days_string')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+        </div>
+
+
     </div>
 
     <div class="mb-3">
@@ -70,6 +89,50 @@
     const startInput = document.getElementById('start_time');
     const endInput = document.getElementById('end_time');
     const hourField = document.getElementById('hour');
+    const dayToggles = document.querySelectorAll('.day-toggle');
+    const checkboxes = document.querySelectorAll('.day-checkbox');
+    const daysStringField = document.getElementById('days_string');
+    console.log('dyas:' + daysStringField.value);
+
+    // Activar visualmente los botones según los checkboxes marcados
+    function syncDayButtons() {
+        const daysStringFieldArray = daysStringField.value.split(',').map(d => d.trim());
+
+        dayToggles.forEach(label => {
+            const day = label.getAttribute('data-day');
+            const checkbox = label.querySelector('input[type="checkbox"]');
+
+            if (daysStringFieldArray.includes(day)) {
+                label.classList.add('active');
+                checkbox.checked = true;
+            } else {
+                label.classList.remove('active');
+                checkbox.checked = false;
+            }
+        });
+    }
+
+    // Ejecutar al cargar
+
+
+    // Construir el days_string desde los checkboxes seleccionados
+    function updateDaysString() {
+        const selected = Array.from(checkboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+        daysStringField.value = selected.join(',');
+    }
+
+    // Al hacer clic en un botón de día
+    dayToggles.forEach(label => {
+        label.addEventListener('click', () => {
+            const checkbox = label.querySelector('input[type="checkbox"]');
+            setTimeout(() => {
+                label.classList.toggle('active', checkbox.checked);
+                updateDaysString();
+            }, 0);
+        });
+    });
 
     // Establecer el mínimo dinámico en end_time cuando cambia start_time
     startInput.addEventListener('change', () => {
@@ -83,7 +146,7 @@
         const [start, end] = hourField.value.split(' - ');
         startInput.value = start;
         endInput.value = end;
-        endInput.min = start; // también establecer min al cargar
+        endInput.min = start;
     }
 
     // Validar al enviar el formulario
@@ -100,6 +163,12 @@
 
             hourField.value = `${start} - ${end}`;
         }
+
+        updateDaysString(); // asegurar que days_string esté actualizado
     });
+
+    // Inicializar al cargar (modo edición)
+    syncDayButtons();
+    updateDaysString();
 </script>
 @endpush

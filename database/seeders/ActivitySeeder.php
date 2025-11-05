@@ -17,27 +17,40 @@ class ActivitySeeder extends Seeder
             [
                 'name' => 'Robótica',
                 'description' => 'Aprende a construir y programar robots.',
-                'day' => 'Lunes',
+                'days_string' => 'Lunes',
                 'hour' => '16:00 - 17:30'
             ],
             [
                 'name' => 'Ajedrez',
                 'description' => 'Mejora tu estrategia y tácticas de juego.',
-                'day' => 'Martes',
+                'days_string' => 'Martes',
                 'hour' => '17:00 - 18:30'
             ],
             [
                 'name' => 'Pintura',
                 'description' => 'Explora tu creatividad con los colores.',
-                'day' => 'Miércoles',
+                'days_string' => 'Miércoles',
                 'hour' => '15:30 - 17:00'
             ],
             [
                 'name' => 'Inglés',
                 'description' => 'Practica inglés conversacional de forma divertida.',
-                'day' => 'Jueves',
+                'days_string' => 'Jueves',
                 'hour' => '16:30 - 18:00'
             ],
+        ]);
+        Activity::create([
+            'name' => 'Yoga',
+            'description' => 'Sesión de relajación y estiramiento',
+            'days_string' => 'Lunes,Miércoles,Viernes',
+            'hour' => '08:00 - 09:00',
+        ]);
+
+        Activity::create([
+            'name' => 'Fútbol',
+            'description' => 'Entrenamiento físico y táctico',
+            'days_string' => 'Martes,Jueves',
+            'hour' => '17:00 - 18:30',
         ]);
     }
 }
