@@ -16,7 +16,7 @@ class ActivityRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'day' => 'required|string|in:Monday,Tuesday,Wednesday,Thursday,Friday',
+            'day' => 'required|string|in:Lunes,Martes,Miércoles,Jueves,Viernes',
             'hour' => 'required|regex:/^\d{2}:\d{2} - \d{2}:\d{2}$/',
         ];
     }

@@ -24,6 +24,8 @@ class ActivityController extends Controller
 
     public function store(ActivityRequest $request)
     {
+
+
         $activity = Activity::create($request->validated());
 
         return JsonOrViewChecker($request, 'activities.index', [

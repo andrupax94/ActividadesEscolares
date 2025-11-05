@@ -3,7 +3,7 @@
     @if($method !== 'POST')
     @method($method)
     @endif
-
+    @include('layouts.errors')
     <div class="mb-3">
         <label for="full_name" class="form-label">Nombre completo</label>
         <input type="text" name="full_name" id="full_name"

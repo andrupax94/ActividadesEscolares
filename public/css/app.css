@@ -74,3 +74,15 @@ header nav {
 .footer i {
     margin-right: 4px;
 }
+
+.table-responsive {
+    max-height: 60vh;
+    overflow: auto;
+    position: relative;
+}
+
+@media (min-width: 992px) {
+    .table-responsive {
+        max-height: 70vh;
+    }
+}
