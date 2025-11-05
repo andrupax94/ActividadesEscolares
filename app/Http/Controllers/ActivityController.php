@@ -10,11 +10,18 @@ class ActivityController extends Controller
 {
     public function index(Request $request)
     {
-        $activities = Activity::all();
+        $query = $request->input('q');
+        $activities = Activity::query();
 
-        return $request->expectsJson()
-            ? response()->json($activities)
-            : view('activities.index', compact('activities'));
+        if ($query) {
+            foreach ((new Activity)->getFillable() as $field) {
+                $activities->orWhere($field, 'LIKE', "%{$query}%");
+            }
+        }
+
+        $activities = $activities->paginate(10);
+
+        return view('activities.index', compact('activities'));
     }
 
     public function create()
@@ -24,8 +31,6 @@ class ActivityController extends Controller
 
     public function store(ActivityRequest $request)
     {
-
-
         $activity = Activity::create($request->validated());
 
         return JsonOrViewChecker($request, 'activities.index', [

@@ -88,3 +88,22 @@ main {
 @media (min-width: 992px) {
     .table-responsive {}
 }
+
+h1 {
+    margin-right: 10px;
+}
+
+.pdfButtom {
+    margin-left: 10px;
+}
+
+.searchBar {
+    margin-left: auto;
+    gap: 5px;
+    height: 42px;
+}
+
+.searchBar button {
+    display: flex;
+    width: 87px;
+}

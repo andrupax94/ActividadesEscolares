@@ -10,11 +10,18 @@ class StudentController extends Controller
 {
     public function index(Request $request)
     {
-        $students = Student::all();
+        $query = $request->input('q');
+        $students = Student::query();
 
-        return $request->expectsJson()
-            ? response()->json($students)
-            : view('students.index', compact('students'));
+        if ($query) {
+            foreach ((new Student)->getFillable() as $field) {
+                $students->orWhere($field, 'LIKE', "%{$query}%");
+            }
+        }
+
+        $students = $students->paginate(10);
+
+        return view('students.index', compact('students'));
     }
 
     public function create()

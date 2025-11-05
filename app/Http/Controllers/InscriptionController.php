@@ -12,7 +12,31 @@ class InscriptionController extends Controller
 {
     public function index(Request $request)
     {
-        $inscriptions = Inscription::orderBy('id', 'desc')->with(['student', 'activity'])->get();
+        $query = $request->input('q');
+
+        $inscriptions = Inscription::query()->with(['student', 'activity']);
+
+        if ($query) {
+            $inscriptions->where(function ($q) use ($query) {
+                $fillable = (new Inscription)->getFillable();
+
+                if (!empty($fillable)) {
+                    foreach ($fillable as $field) {
+                        $q->orWhere($field, 'LIKE', "%{$query}%");
+                    }
+                }
+
+                $q->orWhereHas('student', function ($s) use ($query) {
+                    $s->where('full_name', 'LIKE', "%{$query}%");
+                });
+
+                $q->orWhereHas('activity', function ($a) use ($query) {
+                    $a->where('name', 'LIKE', "%{$query}%");
+                });
+            });
+        }
+
+        $inscriptions = $inscriptions->paginate(10);
 
         return $request->expectsJson()
             ? response()->json($inscriptions)
