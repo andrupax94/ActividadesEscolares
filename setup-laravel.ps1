@@ -3,7 +3,6 @@ if ((Get-ExecutionPolicy) -eq "Restricted") {
     Write-Host "❌ La ejecución de scripts está deshabilitada en este sistema."
     Write-Host "ℹ️ Abre PowerShell como administrador y ejecuta:"
     Write-Host "`nSet-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`n"
-    Write-Host "Luego vuelve a ejecutar este script."
     pause
     exit
 }
@@ -20,7 +19,6 @@ Set-Location $scriptPath
 
 # Inicializar checklist
 $steps = @(
-    @{label="Iniciar MySQL desde XAMPP"; done=$false},
     @{label="Verificar Composer y npm"; done=$false},
     @{label="Copiar archivo .env si falta"; done=$false},
     @{label="Instalar dependencias PHP y JS"; done=$false},
@@ -28,8 +26,7 @@ $steps = @(
     @{label="Verificar conexión a base de datos"; done=$false},
     @{label="Ejecutar migraciones y seeders"; done=$false},
     @{label="Crear enlace de storage"; done=$false},
-    @{label="Compilar assets con Webpack"; done=$false},
-    @{label="Preguntar si desea iniciar servidor"; done=$false}
+    @{label="Compilar assets con Webpack"; done=$false}
 )
 
 function Show-Checklist {
@@ -42,36 +39,17 @@ function Show-Checklist {
     Write-Host "-----------------------------------`n"
 }
 
-function Confirm-Step($mensaje) {
+function Pause-Step($mensaje) {
     Show-Checklist
     Write-Host "➡️ $mensaje"
-    $null = Read-Host "Presiona ENTER para continuar"
+    Start-Sleep -Seconds 2
     cls
 }
 
-# Paso 1: Iniciar MySQL desde XAMPP
-Confirm-Step "Paso 1: Iniciar MySQL desde XAMPP"
-$xamppPaths = @("C:\xampp", "D:\xampp", "E:\xampp")
-$xamppFound = $false
-foreach ($path in $xamppPaths) {
-    if (Test-Path "$path\mysql_start.bat") {
-        Start-Process "$path\mysql_start.bat"
-        $xamppFound = $true
-        break
-    }
-}
-if ($xamppFound) {
-    Write-Host "✅ MySQL iniciado desde XAMPP."
-} else {
-    Write-Host "⚠️ No se encontró XAMPP. Inicia MySQL manualmente si es necesario."
-}
-$steps[0].done = $true
-Show-Checklist
-pause
-cls
+$mysqlConnected = $false
 
-# Paso 2: Verificar Composer y npm
-Confirm-Step "Paso 2: Verificar Composer y npm"
+# Paso 1: Verificar Composer y npm
+Pause-Step "Paso 1: Verificar Composer y npm"
 if (-not (Get-Command composer -ErrorAction SilentlyContinue)) {
     Invoke-WebRequest -Uri https://getcomposer.org/installer -OutFile "$scriptPath\composer-setup.php"
     php "$scriptPath\composer-setup.php"
@@ -87,98 +65,100 @@ if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
 } else {
     Write-Host "✅ npm ya está instalado."
 }
-$steps[1].done = $true
+$steps[0].done = $true
 Show-Checklist
-pause
+Start-Sleep -Seconds 2
 cls
 
-# Paso 3: Copiar .env si falta
-Confirm-Step "Paso 3: Verificar si existe .env y copiar si falta"
+# Paso 2: Copiar .env si falta
+Pause-Step "Paso 2: Verificar si existe .env y copiar si falta"
 if (-not (Test-Path "$scriptPath\.env")) {
     Copy-Item "$scriptPath\.env.example" "$scriptPath\.env"
     Write-Host "✅ .env copiado desde .env.example"
 } else {
     Write-Host "✅ .env ya existe"
 }
-$steps[2].done = $true
+$steps[1].done = $true
 Show-Checklist
-pause
+Start-Sleep -Seconds 2
 cls
 
-# Paso 4: Instalar dependencias PHP y JS
-Confirm-Step "Paso 4: Ejecutar composer install y npm install"
+# Paso 3: Instalar dependencias PHP y JS
+Pause-Step "Paso 3: Ejecutar composer install y npm install"
 composer install
 npm install
 Write-Host "✅ Dependencias instaladas"
-$steps[3].done = $true
+$steps[2].done = $true
 Show-Checklist
-pause
+Start-Sleep -Seconds 2
 cls
 
-# Paso 5: Generar clave de aplicación
-Confirm-Step "Paso 5: Generar clave de aplicación"
+# Paso 4: Generar clave de aplicación
+Pause-Step "Paso 4: Generar clave de aplicación"
 php artisan key:generate
 Write-Host "✅ Clave generada"
-$steps[4].done = $true
+$steps[3].done = $true
 Show-Checklist
-pause
+Start-Sleep -Seconds 2
 cls
 
-# Paso 6: Verificar conexión a base de datos
-Confirm-Step "Paso 6: Verificar conexión a la base de datos"
+# Paso 5: Verificar conexión a base de datos
+Pause-Step "Paso 5: Verificar conexión a la base de datos con php artisan"
 try {
-    php -r "new PDO(getenv('DB_CONNECTION').':host='.getenv('DB_HOST').';dbname='.getenv('DB_DATABASE'), getenv('DB_USERNAME'), getenv('DB_PASSWORD')); echo '✅ Conexión exitosa';"
-    $steps[5].done = $true
+    $output = php artisan migrate:status 2>&1
+    if ($output -match "No application encryption key has been specified") {
+        Write-Host "⚠️ Laravel necesita una clave de aplicación. Ejecuta php artisan key:generate."
+    }
+    if ($output -match "could not find driver" -or $output -match "SQLSTATE") {
+        Write-Host "❌ No se pudo conectar a la base de datos."
+    } else {
+        Write-Host "✅ Conexión a la base de datos verificada."
+        $mysqlConnected = $true
+        $steps[4].done = $true
+    }
 } catch {
-    Write-Host "❌ No se pudo conectar a la base de datos. Verifica tus credenciales en .env"
-    pause
-    exit
+    Write-Host "❌ Error al verificar la base de datos."
 }
 Show-Checklist
-pause
+Start-Sleep -Seconds 2
 cls
 
-# Paso 7: Ejecutar migraciones y seeders
-Confirm-Step "Paso 7: Ejecutar migraciones y seeders"
-php artisan migrate
-php artisan db:seed
-Write-Host "✅ Migraciones y seeders ejecutados"
-$steps[6].done = $true
+# Paso 6: Ejecutar migraciones y seeders (solo si hay conexión)
+if ($mysqlConnected) {
+    Pause-Step "Paso 6: Ejecutar migraciones y seeders"
+    php artisan migrate
+    php artisan db:seed
+    Write-Host "✅ Migraciones y seeders ejecutados"
+    $steps[5].done = $true
+} else {
+    Write-Host "⏭️ Migraciones y seeders omitidos por falta de conexión a MySQL"
+}
 Show-Checklist
-pause
+Start-Sleep -Seconds 2
 cls
 
-# Paso 8: Crear enlace de storage
-Confirm-Step "Paso 8: Crear enlace simbólico de storage"
+# Paso 7: Crear enlace de storage
+Pause-Step "Paso 7: Crear enlace simbólico de storage"
 php artisan storage:link
 Write-Host "✅ Enlace creado"
-$steps[7].done = $true
+$steps[6].done = $true
 Show-Checklist
-pause
+Start-Sleep -Seconds 2
 cls
 
-# Paso 9: Compilar assets con Webpack
-Confirm-Step "Paso 9: Compilar assets con Webpack (npx mix)"
+# Paso 8: Compilar assets con Webpack
+Pause-Step "Paso 8: Compilar assets con Webpack (npx mix)"
 npx mix
 Write-Host "✅ Assets compilados"
-$steps[8].done = $true
+$steps[7].done = $true
 Show-Checklist
-pause
+Start-Sleep -Seconds 2
 cls
 
-# Paso 10: Preguntar si desea iniciar servidor
-Confirm-Step "Paso 10: ¿Deseas iniciar el servidor Laravel?"
-$answer = Read-Host "`n¿Deseas ejecutar 'php artisan serve'? (s/n)"
-if ($answer -eq "s") {
-    $steps[9].done = $true
-    Show-Checklist
-    Write-Host "`n🖥️ Iniciando servidor Laravel..."
-    Write-Host "`nPresiona Ctrl+C para detener el servidor cuando lo desees."
-    php artisan serve
-} else {
-    $steps[9].done = $true
-    Show-Checklist
-    Write-Host "`n✅ Configuración finalizada. Puedes iniciar el servidor manualmente cuando lo desees."
-    Write-Host "`nPresiona cualquier tecla para cerrar..."
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# Final
+Write-Host "`n🎉 ¡Configuración completa!"
+if (-not $mysqlConnected) {
+    Write-Host "⚠️ Las migraciones y el servidor Laravel no se ejecutaron porque no se pudo conectar a MySQL."
 }
+Write-Host "`nPresiona cualquier tecla para cerrar..."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
