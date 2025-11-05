@@ -15,4 +15,8 @@ class Student extends Model
     {
         return $this->belongsToMany(Activity::class, 'inscriptions');
     }
+    public function inscriptions()
+    {
+        return $this->hasMany(Inscription::class);
+    }
 }
