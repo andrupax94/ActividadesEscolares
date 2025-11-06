@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    @vite('resources/css/Modales.css')
 </head>
 
 <body>
@@ -52,6 +53,14 @@
             </p>
         </div>
     </footer>
+    @include('partials._modal', [
+    'activo' => false,
+    'typeModal' => 'question',
+    'h3' => '¿Deseas continuar?',
+    'info' => 'Este es el contenido del modal'
+    ])
+
+    @vite('resources/js/Main.ts')
     @stack('scripts')
 
 </body>

@@ -28,7 +28,7 @@
                     <a href="{{ route('activities.edit', $activity) }}" class="btn btn-sm btn-warning me-1" title="Editar">
                         <i class="bi bi-pencil-fill"></i>
                     </a>
-                    <form action="{{ route('activities.destroy', $activity) }}" method="POST" class="d-inline-block" onsubmit="return confirm('¿Eliminar esta actividad?')">
+                    <form action="{{ route('activities.destroy', $activity) }}" method="POST" class="d-inline-block" onsubmit="return window.ModalesService.confirmar('¿Eliminar esta Actividad?', this)">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-sm btn-danger" title="Eliminar">

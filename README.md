@@ -116,6 +116,8 @@ Si prefieres configurar el proyecto tú mismo, sigue estos pasos desde la raíz 
 
 6. Crea el enlace simbólico de storage:
    php artisan storage:link
+7. (Opcional) Ejecuta Vite:
+    npm run build
 
 ---
 

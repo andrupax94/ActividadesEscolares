@@ -29,7 +29,9 @@
                      <a href="{{ route('students.edit', $student) }}" class="btn btn-sm btn-warning me-1" title="Editar">
                          <i class="bi bi-pencil-fill"></i>
                      </a>
-                     <form action="{{ route('students.destroy', $student) }}" method="POST" class="d-inline-block" onsubmit="return confirm('¿Eliminar este alumno?')">
+                     <form action="{{ route('students.destroy', $student) }}" method="POST" class="d-inline-block" onsubmit="return window.ModalesService.confirmar('¿Eliminar este alumno?', this)">
+
+
                          @csrf
                          @method('DELETE')
                          <button class="btn btn-sm btn-danger" title="Eliminar">

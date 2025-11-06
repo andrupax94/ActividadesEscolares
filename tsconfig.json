@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "es6",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "./public/js",
+        "rootDir": "./typescript",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "sourceMap": true
+    },
+    "include": [
+        "typescript/**/*",
+        "resources/js/Main.ts",
+        "resources/js/ModalesService.ts"
+    ]
+}

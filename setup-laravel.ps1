@@ -26,7 +26,7 @@ $steps = @(
     @{label="Verificar conexión a base de datos"; done=$false},
     @{label="Ejecutar migraciones y seeders"; done=$false},
     @{label="Crear enlace de storage"; done=$false},
-    @{label="Compilar assets con Webpack"; done=$false}
+    @{label="Compilar assets con Vite"; done=$false}
 )
 
 function Show-Checklist {
@@ -147,13 +147,17 @@ Start-Sleep -Seconds 2
 cls
 
 # Paso 8: Compilar assets con Webpack
-Pause-Step "Paso 8: Compilar assets con Webpack (npx mix)"
-npx mix
-Write-Host "✅ Assets compilados"
+# Paso 8: Compilar assets con Vite
+Pause-Step "Paso 8: Compilar assets con Vite (npm run build)"
+npm run build
+Write-Host "✅ Assets compilados con Vite"
+$steps[7].label = "Compilar assets con Vite"
 $steps[7].done = $true
 Show-Checklist
 Start-Sleep -Seconds 2
 cls
+
+
 
 # Final
 Write-Host "`n🎉 ¡Configuración completa!"

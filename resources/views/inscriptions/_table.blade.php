@@ -25,7 +25,7 @@
                 @if(empty($print))
 
                 <td class="text-center">
-                    <form action="{{ route('inscriptions.destroy', $inscription) }}" method="POST" class="d-inline-block" onsubmit="return confirm('¿Eliminar esta inscripción?')">
+                    <form action="{{ route('inscriptions.destroy', $inscription) }}" method="POST" class="d-inline-block" onsubmit="return window.ModalesService.confirmar('¿Eliminar esta inscripcion?', this)">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-sm btn-danger" title="Eliminar">
