@@ -104,8 +104,9 @@ cls
 
 # Paso 5: Verificar conexión a base de datos
 Pause-Step "Paso 5: Verificar conexión a la base de datos con php artisan"
+
 try {
-    $output = php artisan migrate:status 2>&1
+    $output = php artisan migrate 2>&1
 
     if ($output -match "No application encryption key has been specified") {
         Write-Host "⚠️ Laravel necesita una clave de aplicación. Ejecuta php artisan key:generate."
@@ -115,12 +116,16 @@ try {
         Write-Host "❌ No se pudo conectar a la base de datos."
     } elseif ($output -match "Do you want to create it") {
         Write-Host "ℹ️ La base de datos no existe. Se intentará crear automáticamente..."
-        cmd /c "echo y | php artisan migrate:status"
-        Write-Host "✅ Base de datos creada y conexión verificada."
+        cmd /c "echo y | php artisan migrate --force"
+        php artisan db:seed --force
+        Write-Host "✅ Base de datos creada y seeders ejecutados."
         $mysqlConnected = $true
         $steps[4].done = $true
     } else {
-        Write-Host "✅ Conexión a la base de datos verificada."
+        Write-Host "✅ Base de datos detectada. Se ejecutará migrate:fresh..."
+        php artisan migrate:fresh --force
+        php artisan db:seed --force
+        Write-Host "✅ Migraciones reiniciadas y seeders ejecutados."
         $mysqlConnected = $true
         $steps[4].done = $true
     }
@@ -146,10 +151,25 @@ Start-Sleep -Seconds 2
 cls
 
 # Paso 7: Crear enlace de storage
+# Paso 7: Crear enlace simbólico de storage
 Pause-Step "Paso 7: Crear enlace simbólico de storage"
-php artisan storage:link
-Write-Host "✅ Enlace creado"
-$steps[6].done = $true
+
+try {
+    $storageLink = "$scriptPath\public\storage"
+
+    if (Test-Path $storageLink) {
+        Write-Host "✅ El enlace simbólico ya existe: public/storage"
+    } else {
+        php artisan storage:link
+        Write-Host "✅ Enlace simbólico creado correctamente"
+    }
+
+    $steps[6].done = $true
+} catch {
+    Write-Host "⚠️ No se pudo crear el enlace simbólico. Es posible que ya exista o haya un error."
+    $steps[6].done = $true
+}
+
 Show-Checklist
 Start-Sleep -Seconds 2
 cls
@@ -165,6 +185,19 @@ Show-Checklist
 Start-Sleep -Seconds 2
 cls
 
+# Paso 9: Preguntar si desea iniciar el servidor Laravel
+if ($mysqlConnected) {
+    Pause-Step "Paso 9: ¿Deseas iniciar el servidor Laravel con php artisan serve?"
+
+    $respuesta = Read-Host "🟢 ¿Iniciar servidor ahora? (s/n)"
+    if ($respuesta -eq "s" -or $respuesta -eq "S") {
+        Write-Host "`n🚀 Iniciando servidor Laravel en http://localhost:8000 ..."
+        php artisan serve
+        exit
+    } else {
+        Write-Host "ℹ️ Puedes iniciar el servidor manualmente cuando lo desees con: php artisan serve"
+    }
+}
 
 
 # Final
