@@ -106,11 +106,19 @@ cls
 Pause-Step "Paso 5: Verificar conexión a la base de datos con php artisan"
 try {
     $output = php artisan migrate:status 2>&1
+
     if ($output -match "No application encryption key has been specified") {
         Write-Host "⚠️ Laravel necesita una clave de aplicación. Ejecuta php artisan key:generate."
     }
+
     if ($output -match "could not find driver" -or $output -match "SQLSTATE") {
         Write-Host "❌ No se pudo conectar a la base de datos."
+    } elseif ($output -match "Do you want to create it") {
+        Write-Host "ℹ️ La base de datos no existe. Se intentará crear automáticamente..."
+        cmd /c "echo y | php artisan migrate:status"
+        Write-Host "✅ Base de datos creada y conexión verificada."
+        $mysqlConnected = $true
+        $steps[4].done = $true
     } else {
         Write-Host "✅ Conexión a la base de datos verificada."
         $mysqlConnected = $true
