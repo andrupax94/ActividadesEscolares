@@ -68,6 +68,64 @@ Este proyecto consiste en desarrollar una aplicación web con Laravel que simula
   - Detalles de la base de datos (con seeders si se usan)
   - Capturas de pantalla (opcional)
 
+# 💻 Requisitos recomendados
+
+
+## 🧠 Procesador
+- **AMD Ryzen Threadripper PRO 7995WX**
+- 96 núcleos / 192 hilos
+- Frecuencia base: 2.5 GHz, boost hasta 5.1 GHz
+
+## 🧊 Refrigeración
+- Sistema de refrigeración líquida custom
+- Doble radiador de 420mm
+- Bomba silenciosa con control digital
+
+## 🧠 Memoria RAM
+- 512 GB DDR5 ECC
+- Velocidad: 6400 MHz
+- Quad-channel
+
+## 🎮 Tarjeta gráfica
+- NVIDIA RTX 6000 Ada Generation (48 GB GDDR6 ECC)
+- Alternativa: 2x RTX 4090 en SLI
+
+## 💾 Almacenamiento
+- 4 TB NVMe Gen5 SSD (sistema)
+- 8 TB SSD SATA (proyectos)
+- 20 TB HDD (respaldo)
+
+## 🖥️ Pantalla
+- Monitor 8K de 32"
+- HDR1000, 240Hz, G-Sync/FreeSync
+
+## 🔌 Fuente de poder
+- 2000W Platinum modular
+- Protección contra sobrecargas y picos de energía
+
+## 🧱 Caja
+- Torre XL con aislamiento acústico
+- Iluminación RGB sincronizada
+- Soporte para refrigeración criogénica
+
+## 🌐 Conectividad
+- Wi-Fi 7
+- Ethernet 10GbE
+- Bluetooth 5.4
+
+## 🎧 Audio
+- DAC externo de alta fidelidad
+- Sistema de sonido envolvente 7.2
+
+## 🧪 Extras
+- Botón físico “Turbo Overclock”
+- Lector de huellas
+- Soporte para IA local y virtualización avanzada
+
+---
+
+
+
 ---
 
 🚀 INSTALACIÓN DEL PROYECTO – VERSIÓN ALFA
