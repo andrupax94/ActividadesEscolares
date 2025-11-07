@@ -20,7 +20,7 @@
                 <td>{{ $inscription->id }}</td>
                 <td>{{ $inscription->student->full_name }}</td>
                 <td>{{ $inscription->activity->name }}</td>
-                <td>{{ $inscription->activity->day }}</td>
+                <td>{{ $inscription->activity->days_string }}</td>
                 <td>{{ $inscription->activity->hour }}</td>
                 @if(empty($print))
 
